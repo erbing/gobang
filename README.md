@@ -2,6 +2,12 @@
 
 gobang - game
 
+## Start
+
+> npm i
+
+> npm start
+
 ### 1、Dom and canvas build gobang
 
 ### 2、we can back
