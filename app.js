@@ -24,7 +24,6 @@ drawChessBoard();
 
 // 画棋子 白子 黑子
 const drawChess = (i, j) => {
-  // debugger;
   let self = false;
   context.beginPath();
   context.arc(20 + i * 45, 20 + j * 45, 13, 0, 2 * Math.PI); //画圆
@@ -59,4 +58,38 @@ canvas.onclick = e => {
   drawChess(m, n);
 };
 
-//
+// 定义一个三维的数组，用于存放所有赢的情况
+const winPaths = [];
+const getWinPaths = () => {
+  for (let i = 0; i < 10; i++) {
+    winPaths[i] = [];
+    for (let j = 0; j < 10; j++) {
+      winPaths[i][j] = [];
+    }
+  }
+  return winPaths;
+};
+
+console.log(getWinPaths());
+let count = 0;
+// 横向能赢的方法
+const crossWinPaths = [];
+for (var i = 0; i < 10; i++) {
+  for (var j = 0; j < 6; j++) {
+    for (var k = 0; k < 5; k++) {
+      winPaths[i][j + k][count] = true;
+    }
+    count++;
+  }
+}
+
+console.log(winPaths);
+
+// 竖向能赢的方法
+const verticalWinPaths = [];
+
+// 左斜着 向能赢的方法
+const leftWinPaths = [];
+
+// 右斜着 向能赢的方法
+const rightWinPaths = [];
