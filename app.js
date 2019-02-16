@@ -1,7 +1,4 @@
-import demo from "./pages/proxy";
 import "./assets/main.less";
-
-demo();
 
 const appDom = document.getElementById("app");
 const canvas = document.getElementById("canvas");
