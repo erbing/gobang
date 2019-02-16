@@ -22,9 +22,22 @@ const drawChessBoard = function() {
 };
 drawChessBoard();
 
+const chessBoards = () => {
+  let temArr = [];
+  for (let i = 0; i < 10; i++) {
+    temArr[i] = [];
+    for (let j = 0; j < 10; j++) {
+      temArr[i][j] = 0;
+    }
+  }
+  console.log(temArr);
+  return temArr;
+};
+
+const chessBoard = chessBoards();
+
 // 画棋子 白子 黑子
-const drawChess = (i, j) => {
-  let self = false;
+const drawChess = (i, j, self) => {
   context.beginPath();
   context.arc(20 + i * 45, 20 + j * 45, 13, 0, 2 * Math.PI); //画圆
   context.closePath();
@@ -48,16 +61,6 @@ const drawChess = (i, j) => {
   context.fill();
 };
 
-// 落棋子
-canvas.onclick = e => {
-  let x = e.offsetX;
-  let y = e.offsetY;
-
-  let m = Math.floor(x / 45);
-  let n = Math.floor(y / 45);
-  drawChess(m, n);
-};
-
 // 定义一个三维的数组，用于存放所有赢的情况
 const winPaths = [];
 const getWinPaths = () => {
@@ -69,13 +72,26 @@ const getWinPaths = () => {
   }
   return winPaths;
 };
+getWinPaths();
 
-console.log(getWinPaths());
 let count = 0;
 // 横向能赢的方法
-const crossWinPaths = [];
 for (var i = 0; i < 10; i++) {
   for (var j = 0; j < 6; j++) {
+    // debugger;
+    for (var k = 0; k < 5; k++) {
+      winPaths[i][j + k][count] = true;
+    }
+    count++;
+  }
+}
+console.log(count); // 60 横向60赢法
+
+// 竖向能赢的方法
+// const verticalWinPaths = [];
+for (var i = 0; i < 10; i++) {
+  for (var j = 0; j < 6; j++) {
+    // debugger;
     for (var k = 0; k < 5; k++) {
       winPaths[i][j + k][count] = true;
     }
@@ -83,13 +99,79 @@ for (var i = 0; i < 10; i++) {
   }
 }
 
+console.log(count); // 120 横向 + 竖 赢法
+
+// 正斜着 向能赢的方法
+// const leftWinPaths = [];
+for (var i = 0; i < 6; i++) {
+  for (var j = 0; j < 6; j++) {
+    // debugger;
+    for (var k = 0; k < 5; k++) {
+      winPaths[i][j + k][count] = true;
+    }
+    count++;
+  }
+}
+
+console.log(count); // 横向 + 竖 + 正斜 赢法
+
+// 反斜着 向能赢的方法
+// const rightWinPaths = [];
+for (var i = 0; i < 6; i++) {
+  for (var j = 0; j < 6; j++) {
+    // debugger;
+    for (var k = 0; k < 5; k++) {
+      winPaths[i][j + k][count] = true;
+    }
+    count++;
+  }
+}
+
+console.log(count); // 所有的 赢法
 console.log(winPaths);
 
-// 竖向能赢的方法
-const verticalWinPaths = [];
+// 下棋者 赢法的统计
+let isOver = false;
+let myWin = [];
+let computerWin = [];
 
-// 左斜着 向能赢的方法
-const leftWinPaths = [];
+for (let i = 0; i < count; i++) {
+  myWin[i] = 0;
+  computerWin[i] = 0;
+}
 
-// 右斜着 向能赢的方法
-const rightWinPaths = [];
+let self = true;
+// 落棋子
+canvas.onclick = e => {
+  if (isOver) return;
+
+  let x = e.offsetX;
+  let y = e.offsetY;
+
+  let i = Math.floor(x / 45);
+  let j = Math.floor(y / 45);
+  console.log(i, j);
+  //   drawChess(m, n);
+  if (chessBoard[i][j] == 0) {
+    drawChess(i, j, self);
+    if (self) {
+      chessBoard[i][j] = 1;
+    } else {
+      chessBoard[i][j] = 2;
+    }
+    self = !self;
+    //落下子后需要进行统计
+    for (var k = 0; k < count; k++) {
+      if (winPaths[i][j][k]) {
+        //某种赢的某子true
+        myWin[k]++; //离胜利又进一步
+        computerWin[k] = 6; //该种赢法计算机没有机会了
+        if (myWin[k] == 5) {
+          //如果达到5就赢了
+          console.log("厉害，你赢了！！");
+          isOver = true;
+        }
+      }
+    }
+  }
+};
