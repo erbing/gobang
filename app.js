@@ -93,7 +93,7 @@ for (var i = 0; i < 10; i++) {
   for (var j = 0; j < 6; j++) {
     // debugger;
     for (var k = 0; k < 5; k++) {
-      winPaths[i][j + k][count] = true;
+      winPaths[j + k][i][count] = true;
     }
     count++;
   }
@@ -101,13 +101,13 @@ for (var i = 0; i < 10; i++) {
 
 console.log(count); // 120 横向 + 竖 赢法
 
-// 正斜着 向能赢的方法
+// 正斜着 能赢的方法
 // const leftWinPaths = [];
 for (var i = 0; i < 6; i++) {
   for (var j = 0; j < 6; j++) {
     // debugger;
     for (var k = 0; k < 5; k++) {
-      winPaths[i][j + k][count] = true;
+      winPaths[i + k][j + k][count] = true;
     }
     count++;
   }
@@ -115,13 +115,12 @@ for (var i = 0; i < 6; i++) {
 
 console.log(count); // 横向 + 竖 + 正斜 赢法
 
-// 反斜着 向能赢的方法
+// 反斜着 能赢的方法
 // const rightWinPaths = [];
 for (var i = 0; i < 6; i++) {
-  for (var j = 0; j < 6; j++) {
-    // debugger;
+  for (var j = 9; j > 3; j--) {
     for (var k = 0; k < 5; k++) {
-      winPaths[i][j + k][count] = true;
+      winPaths[i + k][j - k][count] = true;
     }
     count++;
   }
@@ -174,10 +173,10 @@ canvas.onclick = e => {
         }
       }
     }
-    if (!isOver) {
-      self = !self;
-      computerAI();
-    }
+    // if (!isOver) {
+    //   self = !self;
+    //   computerAI();
+    // }
   }
 };
 
