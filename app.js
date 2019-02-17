@@ -170,8 +170,15 @@ canvas.onclick = e => {
           //如果达到5就赢了
           console.log("厉害，你赢了！！");
           isOver = true;
+          break;
         }
       }
     }
+    if (!isOver) {
+      self = !self;
+      computerAI();
+    }
   }
 };
+
+const computerAI = () => {};
