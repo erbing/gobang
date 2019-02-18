@@ -1,9 +1,19 @@
 import "./assets/main.less";
 
 const appDom = document.getElementById("app");
+const titleDom = document.getElementById("title");
+const startBtn = document.getElementById("start");
+const backBtn = document.getElementById("back");
+const cancelBackBtn = document.getElementById("cancelBack");
+
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
 
+let isBack = false;
+if (!isBack) {
+  console.log(cancelBackBtn.className);
+  cancelBackBtn.className += " disable-btn";
+}
 // canvas.height = "800";
 // canvas.width = "800";
 
@@ -132,10 +142,12 @@ console.log(winPaths);
 // 下棋者 赢法的统计
 let isOver = false;
 let myWin = [];
+let otherWin = [];
 let computerWin = [];
 
 for (let i = 0; i < count; i++) {
   myWin[i] = 0;
+  otherWin[i] = 0;
   computerWin[i] = 0;
 }
 
@@ -158,21 +170,39 @@ canvas.onclick = e => {
     } else {
       chessBoard[i][j] = 2;
     }
-    self = !self;
+
     //落下子后需要进行统计
     for (var k = 0; k < count; k++) {
       if (winPaths[i][j][k]) {
         //某种赢的某子true
-        myWin[k]++; //离胜利又进一步
+        console.log(chessBoard[i][j]);
+        if (self) {
+          myWin[k]++;
+        } else {
+          otherWin[k]++;
+        }
+
+        //离胜利又进一步
         computerWin[k] = 6; //该种赢法计算机没有机会了
+
         if (myWin[k] == 5) {
           //如果达到5就赢了
           console.log("厉害，你赢了！！");
+          titleDom.innerHTML = "Congratulations, you've won!!!";
+          isOver = true;
+          break;
+        }
+
+        if (otherWin[k] == 5) {
+          //如果达到5就赢了
+          console.log("厉害，你的对手赢了！！");
+          titleDom.innerHTML = "Congratulations, you've won!!!";
           isOver = true;
           break;
         }
       }
     }
+    self = !self;
     if (!isOver) {
       self = !self;
       computerAI();
@@ -180,6 +210,7 @@ canvas.onclick = e => {
   }
 };
 
+//  机器人下期
 const computerAI = () => {
   var myScore = [];
   var computerScore = [];
@@ -255,7 +286,7 @@ const computerAI = () => {
       //   _myWin[k] = myWin[k];
       myWin[k] = 6; //这个位置对方不可能赢了
       if (computerWin[k] == 5) {
-        console.log("o(╯□╰)o，计算机赢了，继续加油哦！");
+        titleDom.innerHTML = "AI wins. Keep trying!!!";
         isOver = true;
       }
     }
@@ -264,4 +295,16 @@ const computerAI = () => {
     console.log(123);
     // self = !self;
   }
+};
+
+// 悔棋功能
+backBtn.onclick = () => {
+  backBtn.className += " disable-btn";
+  cancelBackBtn.className = cancelBackBtn.className.split(" ")[0];
+};
+
+// 撤销悔棋 功能
+cancelBackBtn.onclick = () => {
+  cancelBackBtn.className += " disable-btn";
+  backBtn.className = backBtn.className.split(" ")[0];
 };
