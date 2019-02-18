@@ -11,12 +11,12 @@ const context = canvas.getContext("2d");
 
 let isBack = false;
 if (!isBack) {
-  console.log(cancelBackBtn.className);
   cancelBackBtn.className += " disable-btn";
+  backBtn.className += " disable-btn";
 }
 
-//绘画棋盘
-const drawChessBoard = function() {
+// 绘画棋盘 改为 利用 css 进行绘制
+const drawChessBoard = (function() {
   //   for (var i = 0; i < 10; i++) {
   //     context.moveTo(20 + i * 45, 20);
   //     context.lineTo(20 + i * 45, 20 + 45 * 9);
@@ -26,10 +26,9 @@ const drawChessBoard = function() {
   //     context.stroke();
   //     context.strokeStyle = "#ccc";
   //   }
-};
-drawChessBoard();
+})();
 
-const chessBoards = () => {
+const chessBoard = (() => {
   let temArr = [];
   for (let i = 0; i < 10; i++) {
     temArr[i] = [];
@@ -37,11 +36,8 @@ const chessBoards = () => {
       temArr[i][j] = 0;
     }
   }
-  console.log(temArr);
   return temArr;
-};
-
-const chessBoard = chessBoards();
+})();
 
 // 画棋子 白子 黑子
 const drawChess = (i, j, self) => {
@@ -68,9 +64,10 @@ const drawChess = (i, j, self) => {
   context.fill();
 };
 
-// 定义一个三维的数组，用于存放所有赢的情况
-const winPaths = [];
-const getWinPaths = () => {
+const winPaths = []; // 定义一个三维的数组，用于存放所有赢的情况
+let count = 0; // 定义 所有能赢的 方法数
+
+const getWinPaths = (() => {
   for (let i = 0; i < 10; i++) {
     winPaths[i] = [];
     for (let j = 0; j < 10; j++) {
@@ -78,10 +75,8 @@ const getWinPaths = () => {
     }
   }
   return winPaths;
-};
-getWinPaths();
+})();
 
-let count = 0;
 // 横向能赢的方法
 for (var i = 0; i < 10; i++) {
   for (var j = 0; j < 6; j++) {
@@ -92,10 +87,8 @@ for (var i = 0; i < 10; i++) {
     count++;
   }
 }
-console.log(count); // 60 横向60赢法
 
 // 竖向能赢的方法
-// const verticalWinPaths = [];
 for (var i = 0; i < 10; i++) {
   for (var j = 0; j < 6; j++) {
     // debugger;
@@ -106,10 +99,7 @@ for (var i = 0; i < 10; i++) {
   }
 }
 
-console.log(count); // 120 横向 + 竖 赢法
-
 // 正斜着 能赢的方法
-// const leftWinPaths = [];
 for (var i = 0; i < 6; i++) {
   for (var j = 0; j < 6; j++) {
     // debugger;
@@ -120,10 +110,7 @@ for (var i = 0; i < 6; i++) {
   }
 }
 
-console.log(count); // 横向 + 竖 + 正斜 赢法
-
 // 反斜着 能赢的方法
-// const rightWinPaths = [];
 for (var i = 0; i < 6; i++) {
   for (var j = 9; j > 3; j--) {
     for (var k = 0; k < 5; k++) {
@@ -132,9 +119,6 @@ for (var i = 0; i < 6; i++) {
     count++;
   }
 }
-
-console.log(count); // 所有的 赢法
-console.log(winPaths);
 
 // 下棋者 赢法的统计
 let isOver = false;
@@ -163,6 +147,7 @@ let self = true;
 canvas.onclick = e => {
   if (isOver) return;
   cancelBackChangeStyle();
+
   let x = e.offsetX;
   let y = e.offsetY;
 
@@ -324,6 +309,11 @@ const computerAI = () => {
 // 悔棋功能
 backBtn.onclick = () => {
   // 销毁 我自己下的棋
+  if (backBtn.className && backBtn.className.split(" ").length > 1) {
+    console.log("还未开始下棋，无法悔棋～");
+    return;
+  }
+
   if (isOver) {
     titleDom.innerHTML = "GoBang";
   }
@@ -336,7 +326,6 @@ backBtn.onclick = () => {
     // 将可能赢的情况都减1
     if (winPaths[_i][_j][k]) {
       myWin[k]--;
-      //   computerWin[k] = _computerWin[k]; // 这个位置AI可能赢
     }
   }
 
@@ -363,6 +352,14 @@ const backChangeStyle = () => {
 
 // 撤销悔棋 功能
 cancelBackBtn.onclick = () => {
+  if (
+    cancelBackBtn.className &&
+    cancelBackBtn.className.split(" ").length > 1
+  ) {
+    console.log("还未开始下棋，无法 撤销悔棋～");
+    return;
+  }
+
   chessBoard[_i][_j] = 1; //我，已占位置
   drawChess(_i, _j, self);
   for (var k = 0; k < count; k++) {
