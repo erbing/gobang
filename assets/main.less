@@ -4,6 +4,33 @@ canvas {
   box-shadow: -2px -2px 2px #efefef, 5px 5px 5px #b9b9b9;
   cursor: pointer;
 }
+#id {
+  position: relative;
+}
+
+.css-chess {
+  width: 450px;
+  height: 450px;
+  margin: 0 auto;
+  box-shadow: -2px -2px 2px #efefef, 5px 5px 5px #b9b9b9;
+  cursor: pointer;
+  .css-chess-content {
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-top: 20px;
+    width: 450px;
+    height: 450px;
+    .chess-table {
+      border: 2px solid #ccc;
+      tr {
+        // border: 2px solid #ccc;
+        td {
+          border: 2px solid #ccc;
+        }
+      }
+    }
+  }
+}
 
 h2 {
   margin-top: 40px;

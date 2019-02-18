@@ -14,8 +14,6 @@ if (!isBack) {
   console.log(cancelBackBtn.className);
   cancelBackBtn.className += " disable-btn";
 }
-// canvas.height = "800";
-// canvas.width = "800";
 
 //绘画棋盘
 const drawChessBoard = function() {
