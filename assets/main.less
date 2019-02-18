@@ -1,8 +1,12 @@
 canvas {
   display: block;
   margin: 50px auto;
-  box-shadow: -2px -2px 2px #efefef, 5px 5px 5px #b9b9b9;
+  // box-shadow: -2px -2px 2px #efefef, 5px 5px 5px #b9b9b9;
   cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 #id {
   position: relative;
@@ -15,16 +19,25 @@ canvas {
   box-shadow: -2px -2px 2px #efefef, 5px 5px 5px #b9b9b9;
   cursor: pointer;
   .css-chess-content {
+    position: relative;
     box-sizing: border-box;
     padding-left: 20px;
-    padding-top: 20px;
+    padding-top: 16px;
     width: 450px;
     height: 450px;
+    canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 100;
+    }
     .chess-table {
-      border: 2px solid #ccc;
+      border-collapse: collapse;
+      width: 406px;
+      text-align: center;
       tr {
-        // border: 2px solid #ccc;
         td {
+          height: 41px;
           border: 2px solid #ccc;
         }
       }
@@ -49,7 +62,7 @@ h2 {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    margin-top: 20px;
+    margin-top: 60px;
     .start-btn {
       width: 100px;
       height: 40px;

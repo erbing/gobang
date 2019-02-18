@@ -17,16 +17,15 @@ if (!isBack) {
 
 //绘画棋盘
 const drawChessBoard = function() {
-  for (var i = 0; i < 10; i++) {
-    context.moveTo(20 + i * 45, 20);
-    context.lineTo(20 + i * 45, 20 + 45 * 9);
-    context.stroke();
-
-    context.moveTo(20, 20 + i * 45);
-    context.lineTo(20 + 45 * 9, 20 + i * 45);
-    context.stroke();
-    context.strokeStyle = "#ccc";
-  }
+  //   for (var i = 0; i < 10; i++) {
+  //     context.moveTo(20 + i * 45, 20);
+  //     context.lineTo(20 + i * 45, 20 + 45 * 9);
+  //     context.stroke();
+  //     context.moveTo(20, 20 + i * 45);
+  //     context.lineTo(20 + 45 * 9, 20 + i * 45);
+  //     context.stroke();
+  //     context.strokeStyle = "#ccc";
+  //   }
 };
 drawChessBoard();
 
