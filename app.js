@@ -142,27 +142,44 @@ console.log(winPaths);
 // 下棋者 赢法的统计
 let isOver = false;
 let myWin = [];
+let _myWin = [];
 let otherWin = [];
 let computerWin = [];
+let _computerWin = [];
+let repeatPosition = false;
+
+let _i = "";
+let _j = "";
+let _compi = 0;
+let _compj = 0;
 
 for (let i = 0; i < count; i++) {
   myWin[i] = 0;
   otherWin[i] = 0;
   computerWin[i] = 0;
+  _myWin[i] = 0;
+  _computerWin[i] = 0;
 }
 
 let self = true;
 // 落棋子
 canvas.onclick = e => {
   if (isOver) return;
-
+  cancelBackChangeStyle();
   let x = e.offsetX;
   let y = e.offsetY;
 
   let i = Math.floor(x / 45);
   let j = Math.floor(y / 45);
-  console.log(i, j);
-  //   drawChess(m, n);
+
+  if (_i === i && _j === j) {
+    // 说明重复的下在了原来的位置
+    repeatPosition = true;
+  }
+
+  _i = i;
+  _j = j;
+
   if (chessBoard[i][j] == 0) {
     drawChess(i, j, self);
     if (self) {
@@ -176,8 +193,10 @@ canvas.onclick = e => {
       if (winPaths[i][j][k]) {
         //某种赢的某子true
         console.log(chessBoard[i][j]);
+        // 下面注释的是同 非机器人 下棋的模式需要的
         if (self) {
           myWin[k]++;
+          _computerWin[k] = computerWin[k]; // 为悔棋做准备
         } else {
           otherWin[k]++;
         }
@@ -186,7 +205,7 @@ canvas.onclick = e => {
         computerWin[k] = 6; //该种赢法计算机没有机会了
 
         if (myWin[k] == 5) {
-          //如果达到5就赢了
+          //如果 我能 达到5就赢了
           console.log("厉害，你赢了！！");
           titleDom.innerHTML = "Congratulations, you've won!!!";
           isOver = true;
@@ -194,8 +213,7 @@ canvas.onclick = e => {
         }
 
         if (otherWin[k] == 5) {
-          //如果达到5就赢了
-          console.log("厉害，你的对手赢了！！");
+          //如果 对手 达到5就赢了
           titleDom.innerHTML = "Congratulations, you've won!!!";
           isOver = true;
           break;
@@ -276,14 +294,23 @@ const computerAI = () => {
       }
     }
   }
-  var _compi = u;
-  var _compj = v;
+
+  // 处理悔棋
+  if (repeatPosition) {
+    u = _compi;
+    v = _compj;
+    repeatPosition = false;
+  }
+
+  _compi = u;
+  _compj = v;
+
   drawChess(u, v, false);
   chessBoard[u][v] = 2; //计算机占据位置
   for (var k = 0; k < count; k++) {
     if (winPaths[u][v][k]) {
       computerWin[k]++;
-      //   _myWin[k] = myWin[k];
+      _myWin[k] = myWin[k];
       myWin[k] = 6; //这个位置对方不可能赢了
       if (computerWin[k] == 5) {
         titleDom.innerHTML = "AI wins. Keep trying!!!";
@@ -299,12 +326,97 @@ const computerAI = () => {
 
 // 悔棋功能
 backBtn.onclick = () => {
+  // 销毁 我自己下的棋
+  if (isOver) {
+    titleDom.innerHTML = "GoBang";
+  }
+  isOver = false;
+
+  destoryPieces(_i, _j);
+  chessBoard[_i][_j] = 0;
+
+  for (var k = 0; k < count; k++) {
+    // 将可能赢的情况都减1
+    if (winPaths[_i][_j][k]) {
+      myWin[k]--;
+      //   computerWin[k] = _computerWin[k]; // 这个位置AI可能赢
+    }
+  }
+
+  // 销毁 机器人下的棋子
+  destoryPieces(_compi, _compj);
+
+  chessBoard[_compi][_compj] = 0;
+
+  for (var k = 0; k < count; k++) {
+    // 将可能赢的情况都减1
+    if (winPaths[_compi][_compj][k]) {
+      computerWin[k]--;
+      //   myWin[k] = _myWin[i]; //这个位置我可能赢
+    }
+  }
+  backChangeStyle();
+};
+
+// 悔棋功能 改变 样式方法
+const backChangeStyle = () => {
   backBtn.className += " disable-btn";
   cancelBackBtn.className = cancelBackBtn.className.split(" ")[0];
 };
 
 // 撤销悔棋 功能
 cancelBackBtn.onclick = () => {
+  chessBoard[_i][_j] = 1; //我，已占位置
+  drawChess(_i, _j, self);
+  for (var k = 0; k < count; k++) {
+    if (winPaths[_i][_j][k]) {
+      myWin[k]++;
+      _computerWin[k] = computerWin[k];
+      computerWin[k] = 6; //这个位置对方不可能赢
+    }
+    if (myWin[k] == 5) {
+      titleDom.innerHTML = "Congratulations, you've won!!!";
+      isOver = true;
+    }
+  }
+
+  // 计算机撤销相应的悔棋
+  chessBoard[_compi][_compj] = 2; //计算机，已占位置
+  drawChess(_compi, _compj, false);
+  for (var k = 0; k < count; k++) {
+    if (winPaths[_compi][_compj][k]) {
+      computerWin[k]++;
+      _myWin[k] = myWin[k];
+      myWin[k] = 6; //这个位置对方不可能赢
+    }
+    if (computerWin[k] == 5) {
+      titleDom.innerHTML = "AI wins. Keep trying!!!";
+      isOver = true;
+    }
+  }
+
+  cancelBackChangeStyle();
+};
+
+// 撤销悔棋功能 改变 样式方法
+const cancelBackChangeStyle = () => {
   cancelBackBtn.className += " disable-btn";
   backBtn.className = backBtn.className.split(" ")[0];
+};
+
+// canvas 销毁 棋子
+const destoryPieces = (i, j) => {
+  //擦除该圆
+  context.clearRect(i * 45 + 20 - 13, j * 45 + 20 - 13, 26, 26);
+
+  // 重画该圆周围的格子
+  context.beginPath();
+  context.moveTo(20 + i * 45, j * 45);
+  context.lineTo(20 + i * 45, j * 45 + 45);
+
+  context.moveTo(i * 45, j * 45 + 20);
+  context.lineTo((i + 1) * 45, j * 45 + 20);
+
+  context.stroke();
+  context.strokeStyle = "#ccc";
 };
