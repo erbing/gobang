@@ -8,6 +8,12 @@ gobang - game
 
 > npm start
 
+## Build
+
+> npm run build
+
+> 生成对应的 dist 目录
+
 ### 1、Dom and canvas build gobang
 
 ### 2、we can back
