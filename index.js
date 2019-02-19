@@ -70,6 +70,9 @@ export default class goBang extends init {
     this.cancelBackBtn.addEventListener("click", () => {
       this.chessCancleBack();
     });
+    this.startBtn.addEventListener("click", () => {
+      location.reload();
+    });
   }
 
   // 获取 棋盘中的每个点
@@ -178,6 +181,7 @@ export default class goBang extends init {
   chessClick(e) {
     if (this.isOver) return;
     this.cancelBackChangeStyle();
+    this.startBtn.innerHTML = "reStart";
 
     let x = e.offsetX;
     let y = e.offsetY;
